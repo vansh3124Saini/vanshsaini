@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTubeClone</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f9f9f9;
+            color: #030303;
+            line-height: 1.4;
+        }
+
+        /* Header styles */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            height: 56px;
+            background-color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .menu-icon {
+            margin-right: 24px;
+            cursor: pointer;
+            font-size: 24px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            color: #ff0000;
+            font-weight: 700;
+            font-size: 20px;
+            text-decoration: none;
+        }
+
+        .logo span {
+            margin-left: 4px;
+            color: #282828;
+        }
+
+        .search-container {
+            flex: 1;
+            max-width: 640px;
+            margin: 0 40px;
+            display: flex;
+        }
+
+        .search-container input {
+            flex: 1;
+            height: 40px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 2px 0 0 2px;
+            font-size: 16px;
+        }
+
+        .search-btn {
+            height: 40px;
+            width: 64px;
+            background-color: #f8f8f8;
+            border: 1px solid #ccc;
+            border-left: none;
+            border-radius: 0 2px 2px 0;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .voice-search-btn {
+            height: 40px;
+            width: 40px;
+            background-color: #f8f8f8;
+            border-radius: 50%;
+            margin-left: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .icons-container {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .icon {
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .user-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: #ccc;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Sidebar styles */
+        .container {
+            display: flex;
+            margin-top: 56px;
+        }
+
+        .sidebar {
+            width: 240px;
+            background-color: white;
+            position: fixed;
+            top: 56px;
+            left: 0;
+            bottom: 0;
+            padding: 12px 0;
+            overflow-y: auto;
+            z-index: 50;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 24px;
+            cursor: pointer;
+        }
+
+        .sidebar-item:hover {
+            background-color: #f2f2f2;
+        }
+
+        .sidebar-item.active {
+            background-color: #e5e5e5;
+        }
+
+        .sidebar-item i {
+            margin-right: 24px;
+            font-size: 20px;
+        }
+
+        .sidebar-title {
+            font-size: 14px;
+            padding: 8px 24px;
+            margin-top: 12px;
+            color: #606060;
+            font-weight: 500;
+        }
+
+        .subscriptions {
+            margin-top: 8px;
+        }
+
+        .channel {
+            display: flex;
+            align-items: center;
+            padding: 8px 24px;
+            cursor: pointer;
+        }
+
+        .channel:hover {
+            background-color: #f2f2f2;
+        }
+
+        .channel-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: #ff0000;
+            margin-right: 24px;
+        }
+
+        /* Main content styles */
+        .content {
+            margin-left: 240px;
+            padding: 20px 24px;
+            display: flex;
+            flex-direction: column;
+            width: calc(100% - 240px);
+        }
+
+        .categories {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            padding-bottom: 10px;
+        }
+
+        .categories::-webkit-scrollbar {
+            display: none;
+        }
+
+        .category {
+            background-color: #f2f2f2;
+            padding: 8px 12px;
+            border-radius: 16px;
+            font-size: 14px;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        .category.active {
+            background-color: #030303;
+            color: white;
+        }
+
+        /* Videos grid */
+        .videos-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .video-card {
+            cursor: pointer;
+        }
+
+        .thumbnail {
+            position: relative;
+            width: 100%;
+            height: 0;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            background-color: #e5e5e5;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .thumbnail img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .duration {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 2px 4px;
+            border-radius: 2px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .video-info {
+            display: flex;
+            margin-top: 12px;
+        }
+
+        .channel-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: #ccc;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .video-details {
+            flex: 1;
+        }
+
+        .video-title {
+            font-weight: 500;
+            font-size: 16px;
+            margin-bottom: 6px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .channel-name {
+            color: #606060;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .video-meta {
+            color: #606060;
+            font-size: 14px;
+        }
+
+        /* Video Player Page */
+        .player-container {
+            display: none;
+            margin-left: 240px;
+            width: calc(100% - 240px);
+            padding: 24px;
+        }
+
+        .video-player {
+            width: 100%;
+            background-color: black;
+            aspect-ratio: 16 / 9;
+            margin-bottom: 16px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 200px;
+        }
+
+        .video-primary-info {
+            border-bottom: 1px solid #e5e5e5;
+            padding-bottom: 16px;
+            margin-bottom: 16px;
+        }
+
+        .video-primary-info h1 {
+            font-size: 20px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        .video-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #606060;
+            font-size: 14px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 16px;
+        }
+
+        .action-button {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .action-button i {
+            margin-right: 6px;
+            font-size: 18px;
+        }
+
+        .video-secondary-info {
+            display: flex;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .owner-info {
+            display: flex;
+            flex: 1;
+        }
+
+        .owner-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background-color: #ccc;
+            margin-right: 16px;
+        }
+
+        .owner-details {
+            flex: 1;
+        }
+
+        .owner-name {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .subscriber-count {
+            font-size: 14px;
+            color: #606060;
+            margin-bottom: 12px;
+        }
+
+        .description {
+            font-size: 14px;
+            color: #030303;
+            white-space: pre-wrap;
+        }
+
+        .subscribe-button {
+            background-color: #cc0000;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 2px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-left: 24px;
+        }
+
+        /* Comments section */
+        .comments-section {
+            margin-bottom: 24px;
+        }
+
+        .comments-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .comments-count {
+            font-size: 16px;
+            font-weight: 500;
+            margin-right: 32px;
+        }
+
+        .sort-comments {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            color: #606060;
+            cursor: pointer;
+        }
+
+        .sort-comments i {
+            margin-right: 8px;
+        }
+
+        .add-comment {
+            display: flex;
+            margin-bottom: 32px;
+        }
+
+        .user-comment-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #ccc;
+            margin-right: 16px;
+        }
+
+        .comment-input {
+            flex: 1;
+            border: none;
+            border-bottom: 1px solid #e5e5e5;
+            padding: 8px 0;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .comment {
+            display: flex;
+            margin-bottom: 24px;
+        }
+
+        .comment-details {
+            flex: 1;
+        }
+
+        .commenter-name {
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .comment-date {
+            color: #606060;
+            font-size: 12px;
+            margin-left: 8px;
+            font-weight: 400;
+        }
+
+        .comment-text {
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .comment-actions {
+            display: flex;
+            align-items: center;
+            color: #606060;
+            font-size: 12px;
+        }
+
+        .comment-action {
+            display: flex;
+            align-items: center;
+            margin-right: 16px;
+            cursor: pointer;
+        }
+
+        .comment-action i {
+            margin-right: 6px;
+        }
+
+        /* Related videos */
+        .related-videos {
+            width: 402px;
+            padding-left: 24px;
+        }
+
+        .related-video {
+            display: flex;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+
+        .related-thumbnail {
+            width: 168px;
+            height: 94px;
+            background-color: #e5e5e5;
+            border-radius: 8px;
+            margin-right: 8px;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .related-duration {
+            position: absolute;
+            bottom: 4px;
+            right: 4px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 1px 4px;
+            border-radius: 2px;
+            font-size: 12px;
+        }
+
+        .related-details {
+            flex: 1;
+        }
+
+        .related-title {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .related-channel-name {
+            font-size: 12px;
+            color: #606060;
+            margin-bottom: 4px;
+        }
+
+        .related-meta {
+            font-size: 12px;
+            color: #606060;
+        }
+
+        @media (max-width: 1320px) {
+            .player-and-info {
+                flex-direction: column;
+            }
+            .related-videos {
+                width: 100%;
+                padding-left: 0;
+                margin-top: 24px;
+            }
+            .related-video {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 1000px) {
+            .sidebar {
+                width: 72px;
+            }
+            .sidebar-item span {
+                display: none;
+            }
+            .sidebar-item {
+                justify-content: center;
+                padding: 16px 0;
+            }
+            .sidebar-item i {
+                margin-right: 0;
+            }
+            .sidebar-title, .subscriptions {
+                display: none;
+            }
+            .content, .player-container {
+                margin-left: 72px;
+                width: calc(100% - 72px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .search-container {
+                display: none;
+            }
+            .search-icon-mobile {
+                display: block;
+            }
+            .videos-container {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+        }
+
+        @media (max-width: 480px) {
+            .videos-container {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                display: none;
+            }
+            .content, .player-container {
+                margin-left: 0;
+                width: 100%;
+            }
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 24px;
+            border-radius: 4px;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 16px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 24px;
+        }
+
+        .modal-button {
+            padding: 8px 16px;
+            margin-left: 8px;
+            cursor: pointer;
+            border: none;
+            border-radius: 2px;
+            font-size: 14px;
+        }
+
+        .cancel-button {
+            background-color: #f2f2f2;
+        }
+
+        .confirm-button {
+            background-color: #cc0000;
+            color: white;
+        }
+
+        /* Hidden by default */
+        .search-icon-mobile {
+            display: none;
+        }
+
+        /* For the video player page layout */
+        .player-and-info {
+            display: flex;
+        }
+
+        .main-video-content {
+            flex: 1;
+        }
+        
+        /* Dark mode toggle */
+        .dark-mode-toggle {
+            cursor: pointer;
+            margin-right: 16px;
+        }
+        
+        /* Dark mode styles */
+        body.dark-mode {
+            background-color: #0f0f0f;
+            color: #fff;
+        }
+        
+        body.dark-mode header {
+            background-color: #202020;
+            border-bottom: 1px solid #303030;
+        }
+        
+        body.dark-mode .logo span {
+            color: #fff;
+        }
+        
+        body.dark-mode .search-container input {
+            background-color: #121212;
+            color: #fff;
+            border-color: #303030;
+        }
+        
+        body.dark-mode .search-btn {
+            background-color: #373737;
+            border-color: #303030;
+            color: #aaa;
+        }
+        
+        body.dark-mode .sidebar,
+        body.dark-mode .content,
+        body.dark-mode .player-container {
+            background-color: #0f0f0f;
+        }
+        
+        body.dark-mode .sidebar-item:hover,
+        body.dark-mode .channel:hover {
+            background-color: #272727;
+        }
+        
+        body.dark-mode .sidebar-item.active {
+            background-color: #383838;
+        }
+        
+        body.dark-mode .category {
+            background-color: #272727;
+            color: #fff;
+        }
+        
+        body.dark-mode .category.active {
+            background-color: #fff;
+            color: #0f0f0f;
+        }
+        
+        body.dark-mode .video-title {
+            color: #fff;
+        }
+        
+        body.dark-mode .channel-name,
+        body.dark-mode .video-meta,
+        body.dark-mode .video-stats,
+        body.dark-mode .subscriber-count,
+        body.dark-mode .comments-count,
+        body.dark-mode .sort-comments,
+        body.dark-mode .commenter-name,
+        body.dark-mode .comment-date,
+        body.dark-mode .comment-text,
+        body.dark-mode .comment-actions,
+        body.dark-mode .related-channel-name,
+        body.dark-mode .related-meta {
+            color: #aaa;
+        }
+        
+        body.dark-mode .video-primary-info,
+        body.dark-mode .video-secondary-info,
+        body.dark-mode .comment-input {
+            border-bottom: 1px solid #303030;
+        }
+        
+        body.dark-mode .modal-content {
+            background-color: #202020;
+        }
+        
+        body.dark-mode .cancel-button {
+            background-color: #383838;
+            color: #fff;
+        }
+    </style>
+    <!-- Material Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/material-design-icons/3.0.1/iconfont/material-icons.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo-container">
+            <div class="menu-icon">
+                <i class="material-icons">menu</i>
+            </div>
+            <a href="#" class="logo">
+                <i class="material-icons">play_circle_filled</i>
+                <span>YouTubeClone</span>
+            </a>
+        </div>
+        
+        <div class="search-container">
+            <input type="text" placeholder="Search">
+            <button class="search-btn">
+                <i class="material-icons">search</i>
+            </button>
+            <div class="voice-search-btn">
+                <i class="material-icons">mic</i>
+            </div>
+        </div>
+        
+        <div class="icons-container">
+            <div class="dark-mode-toggle">
+                <i class="material-icons">brightness_medium</i>
+            </div>
+            <div class="search-icon-mobile icon">
+                <i class="material-icons">search</i>
+            </div>
+            <div class="icon">
+                <i class="material-icons">video_call</i>
+            </div>
+            <div class="icon">
+                <i class="material-icons">apps</i>
+            </div>
+            <div class="icon">
+                <i class="material-icons">notifications</i>
+            </div>
+            <div class="user-icon">U</div>
+        </div>
+    </header>
+    
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-item active">
+                <i class="material-icons">home</i>
+                <span>Home</span>
+            </div>
+            <div class="sidebar-item">
+                <i class="material-icons">explore</i>
+                <span>Explore</span>
+            </div>
+            <div class="sidebar-item">
+                <i class="material-icons">subscriptions</i>
+                <span>Subscriptions</span>
+            </div>
+            <div class="sidebar-item">
+                <i class="material-icons">video_library</i>
+                <span>Library</span>
+            </div>
+            <div class="sidebar-item">
+                <i class="material-icons">history</i>
+                <span>History</span>
+            </div>
+            <div class="sidebar-item">
+                <i class="material-icons">smart_display</i>
+                <span>Your videos</span>
+            </div>
+            <div class="sidebar-item">
+                <i class="material-icons">watch_later</i>
+                <span>Watch later</span>
+            </div>
+            <div class="sidebar-item">
+                <i class="material-icons">thumb_up</i>
+                <span>Liked videos</span>
+            </div>
+            
+            <div class="sidebar-title">SUBSCRIPTIONS</div>
+            <div class="subscriptions">
+                <div class="channel">
+                    <div class="channel-avatar"></div>
+                    <span>Channel 1</span>
+                </div>
+                <div class="channel">
+                    <div class="channel-avatar"></div>
+                    <span>Channel 2</span>
+                </div>
+                <div class="channel">
+                    <div class="channel-avatar"></div>
+                    <span>Channel 3</span>
+                </div>
+                <div class="channel">
+                    <div class="channel-avatar"></div>
+                    <span>Channel 4</span>
+                </div>
+            </div>
+            
+            <div class="sidebar-title">MORE FROM YOUTUBE</div>
+            <div class="sidebar-item">
+                <i class="material-icons">movie</i>
+                <span>Movies & Shows</span>
+            </div>
+            <div class="sidebar-item">
+                <i class="material-icons">videogame_asset</i>
+                <span>Gaming</span>
+            </div>
+            <div class="sidebar-item">
+                <i class="material-icons">live_tv</i>
+                <span>Live</span>
+            </div>
+            <div class="sidebar-item">
+                <i class="material-icons">lightbulb</i>
+                <span>Learning</span>
+            </div>
+            <div class="sidebar-item">
+                <i class="material-icons">emoji_events</i>
+                <span>Sports</span>
+            </div>
+        </div>
+        
+        <!-- Main Content (Home Page) -->
+        <div class="content" id="home-page">
+            <div class="categories">
+                <div class="category active">All</div>
+                <div class="category">Music</div>
+                <div class="category">Gaming</div>
+                <div class="category">Programming</div>
+                <div class="category">Comedy</div>
+                <div class="category">Tech</div>
+                <div class="category">News</div>
+                <div class="category">Sports</div>
+                <div class="category">Entertainment</div>
+                <div class="category">Education</div>
+                <div class="category">Travel</div>
+                <div class="category">Cooking</div>
+            </div>
+            
+            <div class="videos-container" id="videos-grid">
+                <!-- Videos will be inserted here by JavaScript -->
+            </div>
+        </div>
+        
+        <!-- Video Player Page -->
+        <div class="player-container" id="player-page">
+            <div class="player-and-info">
+                <div class="main-video-content">
+                    <div class="video-player">
+                        <div>Video Player - Click to Play</div>
+                    </div>
+                    
+                    <div class="video-primary-info">
+                        <h1 id="current-video-title">Video Title</h1>
+                        <div class="video-stats">
+                            <div class="views-date">
+                                <span id="current-video-views">0</span> views • <span id="current-video-date">Mar 8, 2025</span>
+                            </div>
+                            <div class="actions">
+                                <div class="action-button" id="like-button">
+                                    <i class="material-icons">thumb_up</i>
+                                    <span id="current-video-likes">0</span>
+                                </div>
+                                <div class="action-button">
+                                    <i class="material-icons">thumb_down</i>
+                                    <span>Dislike</span>
+                                </div>
+                                <div class="action-button">
+                                    <i class="material-icons">share</i>
+                                    <span>Share</span>
+                                </div>
+                                <div class="action-button">
+                                    <i class="material-icons">playlist_add</i>
+                                    <span>Save</span>
+                                </div>
+                                <div class="action-button">
+                                    <i class="material-icons">more_horiz</i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="video-secondary-info">
+                        <div class="owner-info">
+                            <div class="owner-icon"></div>
+                            <div class="owner-details">
+                                <div class="owner-name" id="current-video-channel">Channel Name</div>
+                                <div class="subscriber-count">1.2M subscribers</div>
+                                <div class="description" id="current-video-description">
+                                    Video description goes here...
+                                </div>
+                            </div>
+                        </div>
+                        <button class="subscribe-button">SUBSCRIBE</button>
+                    </div>
+                    
+                    <div class="comments-section">
+                        <div class="comments-header">
+                            <div class="comments-count"><span id="comments-count">0</span> Comments</div>
+                            <div class="sort-comments">
+                                <i class="material-icons">sort</i>
+                                <span>SORT BY</span>
+                            </div>
+                        </div>
+                        
+                        <div class="add-comment">
+                            <div class="user-comment-icon"></div>
+                            <input type="text" class="comment-input" placeholder="Add a comment...">
+                        </div>
+                        
+                        <div class="comments-list" id="comments-container">
+                            <!-- Comments will be inserted here by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="related-videos" id="related-videos-container">
+                    <!-- Related videos will be inserted here by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="modal-title">Sign in</div>
+            <p>Sign in to like videos, comment, and subscribe.</p>
+            <div class="modal-buttons">
+                <button class="modal-button cancel-button" id="cancel-modal">Cancel</button>
+                <button class="modal-button confirm-button">Sign in</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Sample video data
+        const videos = [
+            {
+                id: 1,
+                title: "How to Build a YouTube Clone with HTML, CSS, and JavaScript",
+                thumbnail: "coding-thumbnail.jpg",
+                duration: "15:42",
+                channel: "Web Dev Simplified",
+                views: 254879,
+                timestamp: "2 weeks ago",
+                description: "In this tutorial, I'll show you how to build a YouTube clone from scratch using only HTML, CSS, and JavaScript. We'll cover the responsive layout, implementing a video player, and more."
+            },
+            {
+                id: 2,
+                title: "Learn JavaScript in 1 Hour - Beginner Friendly Tutorial",
+                thumbnail: "js-tutorial.jpg",
+                duration: "1:02:15",
+                channel: "Programming with Mosh",
+                views: 1548632,
+                timestamp: "1 year ago",
+                description: "This beginner-friendly JavaScript tutorial covers all the basics you need to know to get started with JavaScript programming. Perfect for complete beginners!"
+            },
+            {
+                id: 3,
+                title: "10 CSS Tricks You Didn't Know About",
+                thumbnail: "css-tricks.jpg",
+                duration: "8:27",
+                channel: "CSS Wizard",
+                views: 387612,
+                timestamp: "3 months ago",
+                description: "Discover 10 amazing CSS tricks that will take your web design skills to the next level. These are practical
